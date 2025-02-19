@@ -105,47 +105,6 @@ public class LatinSquareImpl implements LatinSquare {
         return step;
     }
 
-    private static class Step {
-
-        private final SelectionMatrix<Integer> currentSelectionMatrix;
-
-        private final int limit;
-
-        private final List<Integer[][]> result;
-
-        public Step(SelectionMatrix<Integer> currentSelectionMatrix, int limit) {
-            this.currentSelectionMatrix = currentSelectionMatrix;
-            this.limit = limit;
-            this.result = new ArrayList<>();
-        }
-
-        private Step(SelectionMatrix<Integer> currentSelectionMatrix, int limit, List<Integer[][]> result) {
-            this.currentSelectionMatrix = currentSelectionMatrix;
-            this.limit = limit;
-            this.result = result;
-        }
-
-        public void addToResult(SelectionMatrix<Integer> selectionMatrix) {
-            result.add(selectionMatrix.toArray());
-        }
-
-        public Step newStep(SelectionMatrix<Integer> newSelectionMatrix) {
-            return new Step(newSelectionMatrix, limit, result);
-        }
-
-        public boolean isLast() {
-            return result.size() >= limit;
-        }
-
-        public SelectionMatrix<Integer> getCurrentMatrix() {
-            return currentSelectionMatrix;
-        }
-
-        public List<Integer[][]> getResult() {
-            return result;
-        }
-    }
-
     private boolean isInvalid(Integer[][] square, Set<Integer> allElements) {
         if (square.length == 0) {
             return true;
@@ -222,5 +181,46 @@ public class LatinSquareImpl implements LatinSquare {
             }
         }
         return result;
+    }
+
+    private static class Step {
+
+        private final SelectionMatrix<Integer> currentSelectionMatrix;
+
+        private final int limit;
+
+        private final List<Integer[][]> result;
+
+        public Step(SelectionMatrix<Integer> currentSelectionMatrix, int limit) {
+            this.currentSelectionMatrix = currentSelectionMatrix;
+            this.limit = limit;
+            this.result = new ArrayList<>();
+        }
+
+        private Step(SelectionMatrix<Integer> currentSelectionMatrix, int limit, List<Integer[][]> result) {
+            this.currentSelectionMatrix = currentSelectionMatrix;
+            this.limit = limit;
+            this.result = result;
+        }
+
+        public void addToResult(SelectionMatrix<Integer> selectionMatrix) {
+            result.add(selectionMatrix.toArray());
+        }
+
+        public Step newStep(SelectionMatrix<Integer> newSelectionMatrix) {
+            return new Step(newSelectionMatrix, limit, result);
+        }
+
+        public boolean isLast() {
+            return result.size() >= limit;
+        }
+
+        public SelectionMatrix<Integer> getCurrentMatrix() {
+            return currentSelectionMatrix;
+        }
+
+        public List<Integer[][]> getResult() {
+            return result;
+        }
     }
 }
