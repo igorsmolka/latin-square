@@ -41,11 +41,11 @@ public class SearchMatrix<T> {
         this.clazz = clazz;
 
         if (field.length == 0) {
-            throw new RuntimeException();
+            throw new RuntimeException("Field is empty");
         }
         for (T[] row : field) {
             if (row.length != field.length) {
-                throw new RuntimeException();
+                throw new RuntimeException("Field is not matrix");
             }
         }
 
@@ -62,7 +62,7 @@ public class SearchMatrix<T> {
                     rowMatrix.add(new SearchMatrixElement<>(row, column));
                 } else {
                     if (!allElements.contains(field[row][column])) {
-                        throw new RuntimeException("");
+                        throw new RuntimeException(String.format("Matrix contains unknown element %s", field[row][column]));
                     }
                     rowMatrix.add(new SearchMatrixElement<>(row, column, new HashSet<>(Set.of(field[row][column]))));
                 }
@@ -84,7 +84,7 @@ public class SearchMatrix<T> {
 
     public T[][] toArray() {
         if (!isFilled()) {
-            throw new RuntimeException();
+            throw new RuntimeException("Attempt to create an array from unfilled matrix");
         }
 
         @SuppressWarnings("unchecked")
@@ -148,7 +148,7 @@ public class SearchMatrix<T> {
 
     public boolean setRowToMatrixAndReturnValidity(int rowIndex, Map<Integer, T> rowToSet) {
         if (unfilledRows.isEmpty()) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Attempt to set row for empty matrix");
         }
 
         if (rowToSet.size() == size) {
@@ -298,7 +298,7 @@ public class SearchMatrix<T> {
                 Set<T> newVariants = new HashSet<>(allElements);
                 newVariants.removeAll(valuesFromConstraints);
                 if (newVariants.isEmpty()) {
-                    throw new RuntimeException("");
+                    throw new RuntimeException("Matrix is invalid");
                 }
 
                 emptyElementInRow.resetVariants(newVariants);

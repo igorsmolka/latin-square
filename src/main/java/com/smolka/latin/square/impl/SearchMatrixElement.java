@@ -59,7 +59,7 @@ public class SearchMatrixElement<T> {
 
     public T getStrongValue() {
         if (!isStrong()) {
-            throw new RuntimeException();
+            throw new RuntimeException("Attempt to unboxing non-strong element");
         }
         return variants.stream().findFirst().orElseThrow();
     }

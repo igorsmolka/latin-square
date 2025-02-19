@@ -43,7 +43,7 @@ public class LatinSquareImpl implements LatinSquare {
     public Integer[][] getFirstVariant(Integer[][] square) {
         Set<Integer> allElements = IntStream.range(1, square.length + 1).boxed().collect(Collectors.toSet());
         if (isInvalid(square, allElements)) {
-            throw new RuntimeException();
+            throw new RuntimeException("Square is invalid");
         }
 
         SearchMatrix<Integer> searchMatrix = new SearchMatrix<>(square, allElements, Integer.class);
@@ -59,7 +59,7 @@ public class LatinSquareImpl implements LatinSquare {
     public List<Integer[][]> getVariantsWithLimit(Integer[][] square, int limit) {
         Set<Integer> allElements = IntStream.range(1, square.length + 1).boxed().collect(Collectors.toSet());
         if (isInvalid(square, allElements)) {
-            throw new RuntimeException();
+            throw new RuntimeException("Square is invalid");
         }
 
         SearchMatrix<Integer> searchMatrix = new SearchMatrix<>(square, allElements, Integer.class);
