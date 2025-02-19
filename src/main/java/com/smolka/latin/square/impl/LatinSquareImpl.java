@@ -17,7 +17,26 @@ public class LatinSquareImpl implements LatinSquare {
     @Override
     public boolean check(Integer[][] square) {
         Set<Integer> allElements = IntStream.range(1, square.length + 1).boxed().collect(Collectors.toSet());
-        return !isInvalid(square, allElements);
+
+        if (isInvalid(square, allElements)) {
+            return false;
+        }
+
+        for (int row = 0; row < square.length; row++) {
+            Set<Integer> elements = getSetOfNotNullElementsByRow(row, square);
+            if (elements.size() != allElements.size()) {
+                return false;
+            }
+        }
+
+        for (int column = 0; column < square.length; column++) {
+            Set<Integer> elements = getSetOfNotNullElementsByColumn(column, square);
+            if (elements.size() != allElements.size()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

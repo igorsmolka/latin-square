@@ -10,7 +10,7 @@ import java.util.Set;
 public class LatinSquareTest {
 
     @Test
-    public void test_checkNegative() {
+    public void test_checkNegative2() {
         Integer[][] field = {
                 { 1, 2, 3 },
                 { 1, 3, 2 },
