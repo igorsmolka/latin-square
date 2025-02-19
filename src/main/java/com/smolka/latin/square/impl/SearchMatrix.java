@@ -79,7 +79,6 @@ public class SearchMatrix<T> {
             }
         }
 
-        //todo а мы назад-то возвращаемся??? когда появляется мандатори где-то в середине, а до этого мы расставили без учета этого мандатори.
         prepareMatrix();
     }
 
@@ -173,6 +172,12 @@ public class SearchMatrix<T> {
                 unfilledRowValues.get(valueIndex).removeVariant(value);
             }
         }
+
+        return correctUnfilledPartAndReturnValidity();
+    }
+
+    private boolean correctUnfilledPartAndReturnValidity() {
+        List<RowInfo<T>> unfilledMatrix = getUnfilledRowsInOrder();
 
         boolean wasChanges = false;
         do {
@@ -304,6 +309,10 @@ public class SearchMatrix<T> {
 
                 emptyElementInRow.resetVariants(newVariants);
             }
+        }
+
+        if (!correctUnfilledPartAndReturnValidity()) {
+            throw new RuntimeException("Matrix is invalid");
         }
     }
 

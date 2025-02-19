@@ -123,4 +123,18 @@ public class LatinSquareTest {
         assert result != null;
         assert latinSquare.check(result);
     }
+
+    @Test
+    public void test_findingFirstSimple2() {
+        Integer[][] field = {
+                { 1, 2, 3 },
+                { null, null, null },
+                { null, 1, null }
+        };
+
+        LatinSquareImpl latinSquare = new LatinSquareImpl();
+        Integer[][] result = latinSquare.getFirstVariant(field);
+        assert result != null;
+        assert latinSquare.check(result);
+    }
 }
