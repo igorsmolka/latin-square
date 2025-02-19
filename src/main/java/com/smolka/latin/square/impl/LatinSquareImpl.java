@@ -30,7 +30,7 @@ public class LatinSquareImpl implements LatinSquare {
         }
 
         for (int column = 0; column < square.length; column++) {
-            Set<Integer> elements = getSetOfNotNUllElementsByColumn(column, square);
+            Set<Integer> elements = getSetOfNotNullElementsByColumn(column, square);
             if (elements.size() != allElements.size()) {
                 return false;
             }
@@ -168,7 +168,7 @@ public class LatinSquareImpl implements LatinSquare {
         return false;
     }
 
-    private Set<Integer> getSetOfNotNUllElementsByColumn(int column, Integer[][] square) {
+    private Set<Integer> getSetOfNotNullElementsByColumn(int column, Integer[][] square) {
         Set<Integer> result = new HashSet<>();
         for (Integer[] element : square) {
             if (element[column] != null) {
