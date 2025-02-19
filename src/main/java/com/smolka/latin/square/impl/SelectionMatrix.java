@@ -11,9 +11,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SearchMatrix<T> {
+public class SelectionMatrix<T> {
 
-    private final List<List<SearchMatrixElement<T>>> matrix;
+    private final List<List<SelectionMatrixElement<T>>> matrix;
 
     private final Set<Integer> unfilledRows;
 
@@ -23,11 +23,11 @@ public class SearchMatrix<T> {
 
     private final Class<T> clazz;
 
-    private SearchMatrix(List<List<SearchMatrixElement<T>>> matrix,
-                         Set<T> allElements,
-                         Set<Integer> unfilledRows,
-                         int size,
-                         Class<T> clazz) {
+    private SelectionMatrix(List<List<SelectionMatrixElement<T>>> matrix,
+                            Set<T> allElements,
+                            Set<Integer> unfilledRows,
+                            int size,
+                            Class<T> clazz) {
         this.matrix = matrix;
         this.allElements = allElements;
         this.unfilledRows = unfilledRows;
@@ -35,9 +35,9 @@ public class SearchMatrix<T> {
         this.clazz = clazz;
     }
 
-    public SearchMatrix(T[][] field,
-                        Set<T> allElements,
-                        Class<T> clazz) {
+    public SelectionMatrix(T[][] field,
+                           Set<T> allElements,
+                           Class<T> clazz) {
         this.clazz = clazz;
 
         if (field.length == 0) {
@@ -55,23 +55,23 @@ public class SearchMatrix<T> {
         this.unfilledRows = new HashSet<>();
 
         for (int row = 0; row < field.length; row++) {
-            List<SearchMatrixElement<T>> rowMatrix = new ArrayList<>();
+            List<SelectionMatrixElement<T>> rowMatrix = new ArrayList<>();
             matrix.add(rowMatrix);
             for (int column = 0; column < field[row].length; column++) {
                 if (field[row][column] == null) {
-                    rowMatrix.add(new SearchMatrixElement<>(row, column));
+                    rowMatrix.add(new SelectionMatrixElement<>(row, column));
                 } else {
                     if (!allElements.contains(field[row][column])) {
                         throw new RuntimeException(String.format("Matrix contains unknown element %s", field[row][column]));
                     }
-                    rowMatrix.add(new SearchMatrixElement<>(row, column, new HashSet<>(Set.of(field[row][column]))));
+                    rowMatrix.add(new SelectionMatrixElement<>(row, column, new HashSet<>(Set.of(field[row][column]))));
                 }
             }
         }
 
         for (int rowIndex = 0; rowIndex < matrix.size(); rowIndex++) {
-            List<SearchMatrixElement<T>> row = matrix.get(rowIndex);
-            for (SearchMatrixElement<T> elem : row) {
+            List<SelectionMatrixElement<T>> row = matrix.get(rowIndex);
+            for (SelectionMatrixElement<T> elem : row) {
                 if (!elem.isStrong()) {
                     unfilledRows.add(rowIndex);
                     break;
@@ -98,7 +98,7 @@ public class SearchMatrix<T> {
         return result;
     }
 
-    public SearchMatrixElement<T> getElement(int row, int column) {
+    public SelectionMatrixElement<T> getElement(int row, int column) {
         return matrix.get(row).get(column);
     }
 
@@ -106,7 +106,7 @@ public class SearchMatrix<T> {
         return unfilledRows.isEmpty();
     }
 
-    public Pair<Integer, List<SearchMatrixElement<T>>> getUnfilledRowAndIndexWithMinimumVariants() {
+    public Pair<Integer, List<SelectionMatrixElement<T>>> getUnfilledRowAndIndexWithMinimumVariants() {
         if (unfilledRows.isEmpty()) {
             return Pair.of(null, null);
         }
@@ -117,7 +117,7 @@ public class SearchMatrix<T> {
         for (int unfilledRowIndex : unfilledRows) {
             int allVariantsSize = matrix.get(unfilledRowIndex)
                     .stream()
-                    .map(SearchMatrixElement::getVariantsSize)
+                    .map(SelectionMatrixElement::getVariantsSize)
                     .reduce(Integer::sum)
                     .orElseThrow();
 
@@ -132,18 +132,18 @@ public class SearchMatrix<T> {
         return Pair.of(resultIndex, matrix.get(resultIndex));
     }
 
-    public SearchMatrix<T> getCopy() {
-        List<List<SearchMatrixElement<T>>> newMatrix = new ArrayList<>();
+    public SelectionMatrix<T> getCopy() {
+        List<List<SelectionMatrixElement<T>>> newMatrix = new ArrayList<>();
         Set<Integer> unfilledRows = new HashSet<>(this.unfilledRows);
-        for (List<SearchMatrixElement<T>> row : matrix) {
-            List<SearchMatrixElement<T>> newRow = new ArrayList<>();
+        for (List<SelectionMatrixElement<T>> row : matrix) {
+            List<SelectionMatrixElement<T>> newRow = new ArrayList<>();
             newMatrix.add(newRow);
-            for (SearchMatrixElement<T> searchMatrixElement : row) {
-                newRow.add(searchMatrixElement.copy());
+            for (SelectionMatrixElement<T> selectionMatrixElement : row) {
+                newRow.add(selectionMatrixElement.copy());
             }
         }
 
-        return new SearchMatrix<>(newMatrix, allElements, unfilledRows, size, clazz);
+        return new SelectionMatrix<>(newMatrix, allElements, unfilledRows, size, clazz);
     }
 
     public boolean setRowToMatrixAndReturnValidity(int rowIndex, Map<Integer, T> rowToSet) {
@@ -154,7 +154,7 @@ public class SearchMatrix<T> {
         if (rowToSet.size() == size) {
             unfilledRows.remove(rowIndex);
         }
-        List<SearchMatrixElement<T>> rowInMatrix = matrix.get(rowIndex);
+        List<SelectionMatrixElement<T>> rowInMatrix = matrix.get(rowIndex);
 
         List<RowInfo<T>> unfilledMatrix = getUnfilledRowsInOrder();
 
@@ -168,7 +168,7 @@ public class SearchMatrix<T> {
                     continue;
                 }
 
-                List<SearchMatrixElement<T>> unfilledRowValues = unfilledRow.rowValues();
+                List<SelectionMatrixElement<T>> unfilledRowValues = unfilledRow.rowValues();
                 unfilledRowValues.get(valueIndex).removeVariant(value);
             }
         }
@@ -179,7 +179,7 @@ public class SearchMatrix<T> {
     private boolean correctUnfilledPartAndReturnValidity() {
         List<RowInfo<T>> unfilledMatrix = getUnfilledRowsInOrder();
 
-        boolean wasChanges = false;
+        boolean wasChanges;
         do {
             SubSegmentValidityResult rowProcessResult = postProcessRowsSubSegmentsAndReturnValidity(unfilledMatrix);
             if (!rowProcessResult.isValid()) {
@@ -209,7 +209,7 @@ public class SearchMatrix<T> {
     private SubSegmentValidityResult postProcessColumnsSubSegmentsAndReturnValidity(List<RowInfo<T>> matrix) {
         boolean wasChanges = false;
         for (int columnIndex = 0; columnIndex < size; columnIndex++) {
-            List<SearchMatrixElement<T>> column = new ArrayList<>();
+            List<SelectionMatrixElement<T>> column = new ArrayList<>();
             for (RowInfo<T> row : matrix) {
                 column.add(row.rowValues().get(columnIndex));
             }
@@ -244,7 +244,7 @@ public class SearchMatrix<T> {
         return new SubSegmentValidityResult(true, wasChanges);
     }
 
-    private SubSegmentValidityResult postProcessSubSegmentAndReturnValidity(List<SearchMatrixElement<T>> subSegment) {
+    private SubSegmentValidityResult postProcessSubSegmentAndReturnValidity(List<SelectionMatrixElement<T>> subSegment) {
         SubSegmentVariantsOccurrenceInfo<T> subSegmentVariantsOccurrenceInfo = new SubSegmentVariantsOccurrenceInfo<>();
         for (int index = 0; index < subSegment.size(); index++) {
             subSegmentVariantsOccurrenceInfo.putOccurrenceInfo(subSegment.get(index).getVariants(), index);
@@ -266,7 +266,7 @@ public class SearchMatrix<T> {
                     continue;
                 }
 
-                SearchMatrixElement<T> otherElement = subSegment.get(otherIndex);
+                SelectionMatrixElement<T> otherElement = subSegment.get(otherIndex);
                 if (otherElement.removeVariants(variant)) {
                     wasChanges = true;
                 }
@@ -297,10 +297,10 @@ public class SearchMatrix<T> {
 
     private void prepareMatrix() {
         for (int row = 0; row < matrix.size(); row++) {
-            List<SearchMatrixElement<T>> emptyElementsByRow = getEmptyElementsByRow(row, matrix);
-            for (SearchMatrixElement<T> emptyElementInRow : emptyElementsByRow) {
-                List<SearchMatrixElement<T>> constraints = getStrongElementsByElementSegment(emptyElementInRow, matrix);
-                Set<T> valuesFromConstraints = constraints.stream().map(SearchMatrixElement::getStrongValue).collect(Collectors.toSet());
+            List<SelectionMatrixElement<T>> emptyElementsByRow = getEmptyElementsByRow(row, matrix);
+            for (SelectionMatrixElement<T> emptyElementInRow : emptyElementsByRow) {
+                List<SelectionMatrixElement<T>> constraints = getStrongElementsByElementSegment(emptyElementInRow, matrix);
+                Set<T> valuesFromConstraints = constraints.stream().map(SelectionMatrixElement::getStrongValue).collect(Collectors.toSet());
                 Set<T> newVariants = new HashSet<>(allElements);
                 newVariants.removeAll(valuesFromConstraints);
                 if (newVariants.isEmpty()) {
@@ -316,8 +316,8 @@ public class SearchMatrix<T> {
         }
     }
 
-    private List<SearchMatrixElement<T>> getStrongElementsByElementSegment(SearchMatrixElement<T> element, List<List<SearchMatrixElement<T>>> matrix) {
-        List<SearchMatrixElement<T>> result = new ArrayList<>();
+    private List<SelectionMatrixElement<T>> getStrongElementsByElementSegment(SelectionMatrixElement<T> element, List<List<SelectionMatrixElement<T>>> matrix) {
+        List<SelectionMatrixElement<T>> result = new ArrayList<>();
         int row = element.getRow();
         int column = element.getColumn();
 
@@ -325,7 +325,7 @@ public class SearchMatrix<T> {
             if (rowIndex == row) {
                 continue;
             }
-            SearchMatrixElement<T> matrixElem = matrix.get(rowIndex).get(column);
+            SelectionMatrixElement<T> matrixElem = matrix.get(rowIndex).get(column);
             if (matrixElem.isStrong()) {
                 result.add(matrixElem);
             }
@@ -335,7 +335,7 @@ public class SearchMatrix<T> {
             if (columnIndex == column) {
                 continue;
             }
-            SearchMatrixElement<T> matrixElem = matrix.get(row).get(columnIndex);
+            SelectionMatrixElement<T> matrixElem = matrix.get(row).get(columnIndex);
             if (matrixElem.isStrong()) {
                 result.add(matrixElem);
             }
@@ -344,8 +344,8 @@ public class SearchMatrix<T> {
         return result;
     }
 
-    private List<SearchMatrixElement<T>> getEmptyElementsByRow(int row, List<List<SearchMatrixElement<T>>> matrix) {
-        List<SearchMatrixElement<T>> result = new ArrayList<>();
+    private List<SelectionMatrixElement<T>> getEmptyElementsByRow(int row, List<List<SelectionMatrixElement<T>>> matrix) {
+        List<SelectionMatrixElement<T>> result = new ArrayList<>();
 
         for (int column = 0; column < matrix.size(); column++) {
             if (matrix.get(row).get(column).isEmpty()) {
@@ -357,7 +357,7 @@ public class SearchMatrix<T> {
 
     private record RowInfo<T>(
             int rowIndex,
-            List<SearchMatrixElement<T>> rowValues
+            List<SelectionMatrixElement<T>> rowValues
     ) {
 
         @Override

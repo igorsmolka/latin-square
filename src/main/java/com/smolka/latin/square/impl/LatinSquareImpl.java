@@ -46,8 +46,8 @@ public class LatinSquareImpl implements LatinSquare {
             throw new RuntimeException("Square is invalid");
         }
 
-        SearchMatrix<Integer> searchMatrix = new SearchMatrix<>(square, allElements, Integer.class);
-        Step step = findingStep(new Step(searchMatrix, 1));
+        SelectionMatrix<Integer> selectionMatrix = new SelectionMatrix<>(square, allElements, Integer.class);
+        Step step = findingStep(new Step(selectionMatrix, 1));
         if (!step.isLast()) {
             return null;
         }
@@ -62,8 +62,8 @@ public class LatinSquareImpl implements LatinSquare {
             throw new RuntimeException("Square is invalid");
         }
 
-        SearchMatrix<Integer> searchMatrix = new SearchMatrix<>(square, allElements, Integer.class);
-        Step resultStep = findingStep(new Step(searchMatrix, limit));
+        SelectionMatrix<Integer> selectionMatrix = new SelectionMatrix<>(square, allElements, Integer.class);
+        Step resultStep = findingStep(new Step(selectionMatrix, limit));
 
         return resultStep.getResult();
     }
@@ -72,32 +72,32 @@ public class LatinSquareImpl implements LatinSquare {
         if (step.isLast()) {
             return step;
         }
-        SearchMatrix<Integer> currentSearchMatrix = step.getCurrentMatrix();
+        SelectionMatrix<Integer> currentSelectionMatrix = step.getCurrentMatrix();
 
-        Pair<Integer, List<SearchMatrixElement<Integer>>> minRowPair = currentSearchMatrix.getUnfilledRowAndIndexWithMinimumVariants();
+        Pair<Integer, List<SelectionMatrixElement<Integer>>> minRowPair = currentSelectionMatrix.getUnfilledRowAndIndexWithMinimumVariants();
         Integer rowIndex = minRowPair.getKey();
-        List<SearchMatrixElement<Integer>> row = minRowPair.getValue();
+        List<SelectionMatrixElement<Integer>> row = minRowPair.getValue();
 
         if (rowIndex == null) {
-            step.addToResult(currentSearchMatrix);
+            step.addToResult(currentSelectionMatrix);
             return step;
         }
 
         Map<Integer, Set<Integer>> variantsMap = new HashMap<>();
         for (int i = 0; i < row.size(); i++) {
-            SearchMatrixElement<Integer> element = row.get(i);
+            SelectionMatrixElement<Integer> element = row.get(i);
             variantsMap.put(i, element.getVariants());
         }
 
         VariantsFinder<Integer, Integer> variantsFinder = new VariantsFinder<>();
         variantsFinder.findVariantsWithCallback(variantsMap, (newVariant) -> {
-            SearchMatrix<Integer> copySearchMatrix = currentSearchMatrix.getCopy();
-            boolean validity = copySearchMatrix.setRowToMatrixAndReturnValidity(rowIndex, newVariant);
+            SelectionMatrix<Integer> copySelectionMatrix = currentSelectionMatrix.getCopy();
+            boolean validity = copySelectionMatrix.setRowToMatrixAndReturnValidity(rowIndex, newVariant);
             if (!validity) {
                 return step.isLast();
             }
 
-            Step newStep = step.newStep(copySearchMatrix);
+            Step newStep = step.newStep(copySelectionMatrix);
             Step result = findingStep(newStep);
             return result.isLast();
         });
@@ -107,38 +107,38 @@ public class LatinSquareImpl implements LatinSquare {
 
     private static class Step {
 
-        private final SearchMatrix<Integer> currentSearchMatrix;
+        private final SelectionMatrix<Integer> currentSelectionMatrix;
 
         private final int limit;
 
         private final List<Integer[][]> result;
 
-        public Step(SearchMatrix<Integer> currentSearchMatrix, int limit) {
-            this.currentSearchMatrix = currentSearchMatrix;
+        public Step(SelectionMatrix<Integer> currentSelectionMatrix, int limit) {
+            this.currentSelectionMatrix = currentSelectionMatrix;
             this.limit = limit;
             this.result = new ArrayList<>();
         }
 
-        private Step(SearchMatrix<Integer> currentSearchMatrix, int limit, List<Integer[][]> result) {
-            this.currentSearchMatrix = currentSearchMatrix;
+        private Step(SelectionMatrix<Integer> currentSelectionMatrix, int limit, List<Integer[][]> result) {
+            this.currentSelectionMatrix = currentSelectionMatrix;
             this.limit = limit;
             this.result = result;
         }
 
-        public void addToResult(SearchMatrix<Integer> searchMatrix) {
-            result.add(searchMatrix.toArray());
+        public void addToResult(SelectionMatrix<Integer> selectionMatrix) {
+            result.add(selectionMatrix.toArray());
         }
 
-        public Step newStep(SearchMatrix<Integer> newSearchMatrix) {
-            return new Step(newSearchMatrix, limit, result);
+        public Step newStep(SelectionMatrix<Integer> newSelectionMatrix) {
+            return new Step(newSelectionMatrix, limit, result);
         }
 
         public boolean isLast() {
             return result.size() >= limit;
         }
 
-        public SearchMatrix<Integer> getCurrentMatrix() {
-            return currentSearchMatrix;
+        public SelectionMatrix<Integer> getCurrentMatrix() {
+            return currentSelectionMatrix;
         }
 
         public List<Integer[][]> getResult() {

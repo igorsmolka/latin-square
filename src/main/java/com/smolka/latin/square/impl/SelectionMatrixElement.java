@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SearchMatrixElement<T> {
+public class SelectionMatrixElement<T> {
 
     private final int row;
 
@@ -13,13 +13,13 @@ public class SearchMatrixElement<T> {
 
     private final Set<T> variants;
 
-    public SearchMatrixElement(int row, int column) {
+    public SelectionMatrixElement(int row, int column) {
         this.row = row;
         this.column = column;
         this.variants = new HashSet<>();
     }
 
-    public SearchMatrixElement(int row, int column, Set<T> variants) {
+    public SelectionMatrixElement(int row, int column, Set<T> variants) {
         this.row = row;
         this.column = column;
         this.variants = variants;
@@ -41,16 +41,16 @@ public class SearchMatrixElement<T> {
         return column;
     }
 
-    public SearchMatrixElement<T> copy() {
-        return new SearchMatrixElement<>(row, column, new HashSet<>(variants));
+    public SelectionMatrixElement<T> copy() {
+        return new SelectionMatrixElement<>(row, column, new HashSet<>(variants));
     }
 
     public boolean removeVariants(Set<T> variants) {
         return this.variants.removeAll(variants);
     }
 
-    public boolean removeVariant(T variant) {
-        return this.variants.remove(variant);
+    public void removeVariant(T variant) {
+        this.variants.remove(variant);
     }
 
     public boolean isStrong() {
@@ -89,7 +89,7 @@ public class SearchMatrixElement<T> {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        SearchMatrixElement<?> that = (SearchMatrixElement<?>) o;
+        SelectionMatrixElement<?> that = (SelectionMatrixElement<?>) o;
         return row == that.row && column == that.column;
     }
 
