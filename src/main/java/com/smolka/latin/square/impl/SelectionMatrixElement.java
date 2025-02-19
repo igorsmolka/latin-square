@@ -74,14 +74,6 @@ public class SelectionMatrixElement<T> {
         this.variants.addAll(variants);
     }
 
-    public boolean containsVariant(T element) {
-        return variants.contains(element);
-    }
-
-    public boolean containsVariants(Set<T> elements) {
-        return variants.containsAll(elements);
-    }
-
     public boolean isEmpty() {
         return variants.isEmpty();
     }
