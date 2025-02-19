@@ -17,26 +17,7 @@ public class LatinSquareImpl implements LatinSquare {
     @Override
     public boolean check(Integer[][] square) {
         Set<Integer> allElements = IntStream.range(1, square.length + 1).boxed().collect(Collectors.toSet());
-
-        if (isInvalid(square, allElements)) {
-            return false;
-        }
-
-        for (int row = 0; row < square.length; row++) {
-            Set<Integer> elements = getSetOfNotNullElementsByRow(row, square);
-            if (elements.size() != allElements.size()) {
-                return false;
-            }
-        }
-
-        for (int column = 0; column < square.length; column++) {
-            Set<Integer> elements = getSetOfNotNullElementsByColumn(column, square);
-            if (elements.size() != allElements.size()) {
-                return false;
-            }
-        }
-
-        return true;
+        return !isInvalid(square, allElements);
     }
 
     @Override
@@ -165,7 +146,43 @@ public class LatinSquareImpl implements LatinSquare {
             }
         }
 
+        for (int row = 0; row < square.length; row++) {
+            int count = getNotNullElementsCountByRow(row, square);
+            Set<Integer> notNullElementsSet = getSetOfNotNullElementsByRow(row, square);
+            if (count != notNullElementsSet.size()) {
+                return true;
+            }
+        }
+
+        for (int column = 0; column < square.length; column++) {
+            int count = getNotNullElementsCountByColumn(column, square);
+            Set<Integer> notNullElementsSet = getSetOfNotNullElementsByColumn(column, square);
+            if (count != notNullElementsSet.size()) {
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    private int getNotNullElementsCountByColumn(int column, Integer[][] square) {
+        int counter = 0;
+        for (Integer[] element : square) {
+            if (element[column] != null) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    private int getNotNullElementsCountByRow(int row, Integer[][] square) {
+        int counter = 0;
+        for (int column = 0; column < square.length; column++) {
+            if (square[row][column] != null) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     private Set<Integer> getSetOfNotNullElementsByColumn(int column, Integer[][] square) {
